@@ -34,8 +34,8 @@ namespace JWT
 
         public JwtHandler(
             ILogger<JwtHandler> logger,
-            IAuthOptions auOP,
-            IApplicationSettings aSettings,
+            IOptionsMonitor<IAuthOptions> auOP,
+            IOptionsMonitor<IApplicationSettings> aSettings,
             IClientApplicationTokenProviderService cProvider,
             IJwtSigningDecodingKey signingDecodingKey,
             IJwtSigningEncodingKey signingEncodingKey,
@@ -45,8 +45,8 @@ namespace JWT
         {
             //IdentityModelEventSource.ShowPII = true;
             this.Logger = logger;
-            this.AuthOptions = auOP;
-            this.ApplicationSettings = aSettings;
+            this.AuthOptions = auOP.CurrentValue;
+            this.ApplicationSettings = aSettings.CurrentValue;
             this.ClientProvider = cProvider;
             this.SigningDecodingKey = signingDecodingKey;
             this.SigningEncodingKey = signingEncodingKey;
