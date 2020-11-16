@@ -4,6 +4,7 @@ using System.Security.Claims;
 using Interface;
 using Interface.Encrypting;
 using Interface.Signing;
+using JWTLibrary.Interface;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Logging;
@@ -41,6 +42,7 @@ namespace JWT
 
             validationParameters.TokenDecryptionKey = this.EncryptingDecodingKey.GetKey(this.AuthOptions.PrivateKey);
             validationParameters.ValidateIssuerSigningKey = true;
+            validationParameters.ValidIssuer = this.AuthOptions.Issuer;
             validationParameters.ValidateIssuer = true;
             validationParameters.ValidateAudience = true;
             validationParameters.ValidateLifetime = true;

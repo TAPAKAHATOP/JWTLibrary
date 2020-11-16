@@ -1,4 +1,4 @@
-namespace Interface
+namespace JWTLibrary.Interface
 {
     public interface IAuthOptions
     {
