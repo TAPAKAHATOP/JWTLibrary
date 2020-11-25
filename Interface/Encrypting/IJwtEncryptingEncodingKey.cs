@@ -1,6 +1,6 @@
 using Microsoft.IdentityModel.Tokens;
 
-namespace Interface.Encrypting
+namespace JWTLibrary.Interface.Encrypting
 {
     public interface IJwtEncryptingEncodingKey
     {

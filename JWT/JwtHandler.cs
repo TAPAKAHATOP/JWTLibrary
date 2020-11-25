@@ -1,9 +1,8 @@
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using Interface;
-using Interface.Encrypting;
-using Interface.Signing;
+using JWTLibrary.Interface.Encrypting;
+using JWTLibrary.Interface.Signing;
 using JWTLibrary.Interface;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
