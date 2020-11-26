@@ -1,6 +1,15 @@
 using System;
-using JWT;
 using JWTLibrary.JWT;
+using JWTLibrary.Client;
+using JWTLibrary.Default.Service;
+using JWTLibrary.Default.Service.Client;
+using JWTLibrary.Default.Service.Encrypting;
+using JWTLibrary.Default.Service.Server;
+using JWTLibrary.Default.Service.Signing;
+using JWTLibrary.Interface;
+using JWTLibrary.Interface.Encrypting;
+using JWTLibrary.Interface.Signing;
+using JWTLibrary.Server;
 using JWTLibrary.Utils.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,11 +19,30 @@ namespace JWTLibrary.Utils
 {
     public static class JWTServiceCollectionExtension
     {
-        public static IServiceCollection AddJWTAuthentication(this IServiceCollection services)
+        public static IServiceCollection AddJWTService(this IServiceCollection services, bool useDefaults = true)
         {
-            services.AddSingleton<IPostConfigureOptions<JwtBearerOptions>, JwtBearerOptionsPostConfigureOptions>();
-            services.AddSingleton<JwtHandler>();
-            services.AddSingleton<JWTUserDataResolver>();
+            if (useDefaults)
+            {
+                services.AddSingleton<IJWTEncryptingEncodingKeyService, JWTEncryptingEncodingKeyService>();
+                services.AddSingleton<IJWTSigningEncodingKeyService, JWTSigningEncodingKeyService>();
+                services.AddSingleton<IJWTGeneratorService, JWTGeneratorService>();
+            }
+            return services;
+        }
+        public static IServiceCollection AddJWTAuthentication(this IServiceCollection services, bool useDefaults = true)
+        {
+            services.AddSingleton<IJWTUserDataResolver, JWTUserDataResolver>();
+
+            if (useDefaults)
+            {
+                services.AddSingleton<IPostConfigureOptions<JwtBearerOptions>, JwtBearerOptionsPostConfigureOptions>();
+                services.AddSingleton<IJWTEncryptingDecodingKeyService, JWTEncryptingDecodingKeyService>();
+                services.AddSingleton<IJWTSigningDecodingKeyService, JWTSigningDecodingKeyService>();
+                services.AddSingleton<IJWTResolverService, JWTResolverDefaultService>();
+                services.AddSingleton<IJWTHandler, JWTHandler>();
+            }
+
+
             services.AddAuthentication(options =>
                 {
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

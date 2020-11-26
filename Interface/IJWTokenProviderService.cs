@@ -2,7 +2,7 @@ using JWTLibrary.JWT;
 
 namespace JWTLibrary.Interface
 {
-    public interface IJWTTokenProviderService
+    public interface IJWTProviderService
     {
         TokenData RefreshToken(string rToken);
     }

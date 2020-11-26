@@ -2,29 +2,31 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using JWTLibrary.Client;
 using JWTLibrary.Interface;
+using JWTLibrary.JWT;
 using Newtonsoft.Json;
 
-namespace JWTLibrary.JWT
+namespace JWTLibrary.Default.Service.Client
 {
-    public class TokenResolverService
+    public class JWTResolverDefaultService : IJWTResolverService
     {
         public HttpClient Http = new HttpClient();
         public IAuthOptions AuthOptions { get; }
 
-        public TokenResolverService(IAuthOptions opt)
+        public JWTResolverDefaultService(IAuthOptions opt)
         {
-            this.AuthOptions = opt;
+            AuthOptions = opt;
         }
 
-        public async Task<TokenData> ResolveCodeAsync(string code, string sign)
+        public async Task<TokenData> ResolveCode(string code, string sign)
         {
             var content = new FormUrlEncodedContent(new[]
                    {
                 new KeyValuePair<string, string>("", code)
             });
-            var url = $"{this.AuthOptions.Server}cap/code/{this.AuthOptions.ApplicationClientId}/?shareCode={code}&signature={sign}";
-            HttpResponseMessage response = await this.Http.PostAsync(url, content);
+            var url = $"{AuthOptions.Server}cap/code/{AuthOptions.ApplicationClientId}/?shareCode={code}&signature={sign}";
+            HttpResponseMessage response = await Http.PostAsync(url, content);
             try
             {
 
@@ -48,8 +50,8 @@ namespace JWTLibrary.JWT
             });
             try
             {
-                var url = $"{this.AuthOptions.Server}cap/refresh/{this.AuthOptions.ApplicationClientId}?code={code}&signature={sign}";
-                HttpResponseMessage response = await this.Http.PostAsync(url, content);
+                var url = $"{AuthOptions.Server}cap/refresh/{AuthOptions.ApplicationClientId}?code={code}&signature={sign}";
+                HttpResponseMessage response = await Http.PostAsync(url, content);
                 response.EnsureSuccessStatusCode();
                 var resp = await response.Content.ReadAsStringAsync();
 

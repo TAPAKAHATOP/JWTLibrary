@@ -2,7 +2,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace JWTLibrary.Interface.Signing
 {
-    public interface IJwtSigningEncodingKey
+    public interface IJWTSigningEncodingKeyService
     {
         string SigningAlgorithm { get; set; }
 
