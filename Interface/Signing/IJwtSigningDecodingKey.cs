@@ -1,6 +1,6 @@
 using Microsoft.IdentityModel.Tokens;
 
-namespace Interface.Signing
+namespace JWTLibrary.Interface.Signing
 {
     public interface IJwtSigningDecodingKey
     {
