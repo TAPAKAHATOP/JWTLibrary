@@ -4,6 +4,7 @@ using JWTLibrary.Default.Service;
 using JWTLibrary.Default.Service.Client;
 using JWTLibrary.Default.Service.Encrypting;
 using JWTLibrary.Default.Service.Signing;
+using JWTLibrary.Interface;
 using JWTLibrary.Interface.Encrypting;
 using JWTLibrary.Interface.Signing;
 using JWTLibrary.Utils.Options;
@@ -17,6 +18,8 @@ namespace JWTLibrary.Utils
     {
         public static IServiceCollection AddJWTAuthentication(this IServiceCollection services, bool useDefaults = true)
         {
+            services.AddSingleton<IJWTUserDataResolver, JWTUserDataResolver>();
+
             if (useDefaults)
             {
                 services.AddSingleton<IPostConfigureOptions<JwtBearerOptions>, JwtBearerOptionsPostConfigureOptions>();
