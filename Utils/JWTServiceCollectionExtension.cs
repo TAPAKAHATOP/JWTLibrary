@@ -1,5 +1,6 @@
 using System;
 using JWT;
+using JWTLibrary.JWT;
 using JWTLibrary.Utils.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,7 +14,7 @@ namespace JWTLibrary.Utils
         {
             services.AddSingleton<IPostConfigureOptions<JwtBearerOptions>, JwtBearerOptionsPostConfigureOptions>();
             services.AddSingleton<JwtHandler>();
-
+            services.AddSingleton<JWTUserDataResolver>();
             services.AddAuthentication(options =>
                 {
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -22,7 +23,7 @@ namespace JWTLibrary.Utils
                 })
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
                 {
-                    options.RequireHttpsMetadata = false;
+                    options.RequireHttpsMetadata = true;
                     options.SaveToken = true;
                 });
 
