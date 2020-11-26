@@ -1,4 +1,4 @@
-using JWT;
+using JWTLibrary.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 
@@ -6,9 +6,9 @@ namespace JWTLibrary.Utils.Options
 {
     public class JwtBearerOptionsPostConfigureOptions : IPostConfigureOptions<JwtBearerOptions>
     {
-        private readonly JwtHandler _tokenValidator;
+        private readonly IJWTHandler _tokenValidator;
 
-        public JwtBearerOptionsPostConfigureOptions(JwtHandler tokenValidator)
+        public JwtBearerOptionsPostConfigureOptions(IJWTHandler tokenValidator)
         {
             _tokenValidator = tokenValidator;
         }

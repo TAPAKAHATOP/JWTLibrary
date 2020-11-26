@@ -8,11 +8,11 @@ namespace JWTLibrary.Utils.Middlewares
     public class JWTMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly IJWTTokenProviderService TService;
+        private readonly IJWTokenProviderService TService;
 
         private readonly IJWTOptions JwtOptions;
 
-        public JWTMiddleware(RequestDelegate next, IJWTTokenProviderService tService, IJWTOptions jwtOptions)
+        public JWTMiddleware(RequestDelegate next, IJWTokenProviderService tService, IJWTOptions jwtOptions)
         {
             _next = next;
             this.TService = tService;

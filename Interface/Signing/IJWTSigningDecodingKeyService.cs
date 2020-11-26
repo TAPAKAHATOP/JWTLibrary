@@ -2,7 +2,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace JWTLibrary.Interface.Signing
 {
-    public interface IJwtSigningDecodingKey
+    public interface IJWTSigningDecodingKeyService
     {
         SecurityKey GetKey(string clientKey);
     }

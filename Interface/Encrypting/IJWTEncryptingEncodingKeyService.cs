@@ -2,11 +2,11 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace JWTLibrary.Interface.Encrypting
 {
-    public interface IJwtEncryptingEncodingKey
+    public interface IJWTEncryptingEncodingKeyService
     {
         string SigningAlgorithm { get; set; }
         string EncryptingAlgorithm { get; set; }
 
-        SecurityKey GetKey(string v);
+        SecurityKey GetKey(string key);
     }
 }
