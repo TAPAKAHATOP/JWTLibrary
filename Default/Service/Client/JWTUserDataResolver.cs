@@ -1,11 +1,10 @@
 using System;
-using System.Linq;
 using System.Security.Claims;
 using JWTLibrary.Interface;
 
-namespace JWTLibrary.JWT
+namespace JWTLibrary.Default.Service.Client
 {
-    public class JWTUserDataResolver
+    public class JWTUserDataResolver : IJWTUserDataResolver
     {
         public IJWTUserData ResolveCurrentUserData(ClaimsPrincipal user)
         {
