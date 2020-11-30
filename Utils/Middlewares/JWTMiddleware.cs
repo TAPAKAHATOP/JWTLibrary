@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using JWTLibrary.Client;
 using JWTLibrary.Interface;
 using JWTLibrary.JWT;
 using Microsoft.AspNetCore.Http;
@@ -7,12 +8,13 @@ namespace JWTLibrary.Utils.Middlewares
 {
     public class JWTMiddleware
     {
+        private static string SIGNATURE = "sign";
         private readonly RequestDelegate _next;
-        private readonly IJWTProviderService TService;
+        private readonly IJWTResolverService TService;
 
         private readonly IJWTOptions JwtOptions;
 
-        public JWTMiddleware(RequestDelegate next, IJWTProviderService tService, IJWTOptions jwtOptions)
+        public JWTMiddleware(RequestDelegate next, IJWTResolverService tService, IJWTOptions jwtOptions)
         {
             _next = next;
             this.TService = tService;
@@ -22,6 +24,8 @@ namespace JWTLibrary.Utils.Middlewares
         {
             var aToken = context.Request.Cookies[TokenData.Access];
             var rToken = context.Request.Cookies[TokenData.Refresh];
+            string signature = "";
+            context.Request.Cookies.TryGetValue(SIGNATURE, out signature);
 
             if (!string.IsNullOrEmpty(aToken))
             {
@@ -31,7 +35,7 @@ namespace JWTLibrary.Utils.Middlewares
             {
                 if (!string.IsNullOrEmpty(rToken))
                 {
-                    TokenData nToken = this.TService.RefreshToken(rToken);
+                    TokenData nToken = this.TService.RefreshToken(rToken, signature).Result;
                     if (nToken != null)
                     {
                         context.Response.Cookies.Append(TokenData.Access, nToken.AccessToken, new CookieOptions() { MaxAge = JwtOptions.GetExpirationTimeSpanForAccessToken() });
