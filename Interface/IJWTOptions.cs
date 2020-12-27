@@ -2,10 +2,8 @@ using System;
 
 namespace JWTLibrary.Interface
 {
-    public interface IJWTOptions
+    public interface IJWTOptions : IJWTLifeTimeOptions
     {
-        int RefreshTokenLifeTime { get; set; }
-        int AccessTokenLifeTime { get; set; }
         TimeSpan GetExpirationTimeSpanForAccessToken();
         TimeSpan GetExpirationTimeSpanForRefreshToken();
 
