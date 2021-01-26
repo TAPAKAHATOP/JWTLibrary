@@ -1,19 +1,26 @@
 using System.Threading.Tasks;
+using JWTLibrary.Client;
 using JWTLibrary.Interface;
 using JWTLibrary.JWT;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace JWTLibrary.Utils.Middlewares
 {
     public class JWTMiddleware
     {
+        private static string SIGNATURE = "sign";
+
+        public ILogger<JWTMiddleware> Logger { get; }
+
         private readonly RequestDelegate _next;
-        private readonly IJWTProviderService TService;
+        private readonly IJWTResolverService TService;
 
-        private readonly IJWTOptions JwtOptions;
+        private readonly IJWTLifeTimeOptions JwtOptions;
 
-        public JWTMiddleware(RequestDelegate next, IJWTProviderService tService, IJWTOptions jwtOptions)
+        public JWTMiddleware(ILogger<JWTMiddleware> logger, RequestDelegate next, IJWTResolverService tService, IJWTLifeTimeOptions jwtOptions)
         {
+            this.Logger = logger;
             _next = next;
             this.TService = tService;
             this.JwtOptions = jwtOptions;
@@ -22,6 +29,8 @@ namespace JWTLibrary.Utils.Middlewares
         {
             var aToken = context.Request.Cookies[TokenData.Access];
             var rToken = context.Request.Cookies[TokenData.Refresh];
+            string signature = "";
+            context.Request.Cookies.TryGetValue(SIGNATURE, out signature);
 
             if (!string.IsNullOrEmpty(aToken))
             {
@@ -31,11 +40,12 @@ namespace JWTLibrary.Utils.Middlewares
             {
                 if (!string.IsNullOrEmpty(rToken))
                 {
-                    TokenData nToken = this.TService.RefreshToken(rToken);
+                    this.Logger.LogInformation("Start refresh access token by refresh");
+                    TokenData nToken = this.TService.RefreshToken(rToken, signature).Result;
                     if (nToken != null)
                     {
-                        context.Response.Cookies.Append(TokenData.Access, nToken.AccessToken, new CookieOptions() { MaxAge = JwtOptions.GetExpirationTimeSpanForAccessToken() });
-                        context.Response.Cookies.Append(TokenData.Refresh, nToken.RefreshToken, new CookieOptions() { MaxAge = JwtOptions.GetExpirationTimeSpanForRefreshToken() });
+                        context.Response.Cookies.Append(TokenData.Access, nToken.AccessToken, new CookieOptions() { MaxAge = JwtOptions.ExpirationTimeSpanForAccessToken });
+                        context.Response.Cookies.Append(TokenData.Refresh, nToken.RefreshToken, new CookieOptions() { MaxAge = JwtOptions.ExpirationTimeSpanForRefreshToken });
                         context.Request.Headers.Add("Authorization", "Bearer " + nToken.AccessToken);
                     }
                 }
