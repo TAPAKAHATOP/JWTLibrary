@@ -1,6 +1,6 @@
 namespace JWTLibrary.Interface
 {
-    public interface IAuthOptions
+    public interface IAuthOptions : IJWTLifeTimeOptions
     {
         string Server { get; set; }
         string Issuer { get; set; }
