@@ -3,19 +3,24 @@ using JWTLibrary.Client;
 using JWTLibrary.Interface;
 using JWTLibrary.JWT;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace JWTLibrary.Utils.Middlewares
 {
     public class JWTMiddleware
     {
         private static string SIGNATURE = "sign";
+
+        public ILogger<JWTMiddleware> Logger { get; }
+
         private readonly RequestDelegate _next;
         private readonly IJWTResolverService TService;
 
         private readonly IJWTOptions JwtOptions;
 
-        public JWTMiddleware(RequestDelegate next, IJWTResolverService tService, IJWTOptions jwtOptions)
+        public JWTMiddleware(ILogger<JWTMiddleware> logger, RequestDelegate next, IJWTResolverService tService, IJWTOptions jwtOptions)
         {
+            this.Logger = logger;
             _next = next;
             this.TService = tService;
             this.JwtOptions = jwtOptions;
@@ -35,6 +40,7 @@ namespace JWTLibrary.Utils.Middlewares
             {
                 if (!string.IsNullOrEmpty(rToken))
                 {
+                    this.Logger.LogInformation("Start refresh access token by refresh");
                     TokenData nToken = this.TService.RefreshToken(rToken, signature).Result;
                     if (nToken != null)
                     {
