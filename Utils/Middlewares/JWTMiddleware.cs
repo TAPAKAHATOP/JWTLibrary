@@ -16,9 +16,9 @@ namespace JWTLibrary.Utils.Middlewares
         private readonly RequestDelegate _next;
         private readonly IJWTResolverService TService;
 
-        private readonly IJWTOptions JwtOptions;
+        private readonly IJWTLifeTimeOptions JwtOptions;
 
-        public JWTMiddleware(ILogger<JWTMiddleware> logger, RequestDelegate next, IJWTResolverService tService, IJWTOptions jwtOptions)
+        public JWTMiddleware(ILogger<JWTMiddleware> logger, RequestDelegate next, IJWTResolverService tService, IJWTLifeTimeOptions jwtOptions)
         {
             this.Logger = logger;
             _next = next;
@@ -44,8 +44,8 @@ namespace JWTLibrary.Utils.Middlewares
                     TokenData nToken = this.TService.RefreshToken(rToken, signature).Result;
                     if (nToken != null)
                     {
-                        context.Response.Cookies.Append(TokenData.Access, nToken.AccessToken, new CookieOptions() { MaxAge = JwtOptions.GetExpirationTimeSpanForAccessToken() });
-                        context.Response.Cookies.Append(TokenData.Refresh, nToken.RefreshToken, new CookieOptions() { MaxAge = JwtOptions.GetExpirationTimeSpanForRefreshToken() });
+                        context.Response.Cookies.Append(TokenData.Access, nToken.AccessToken, new CookieOptions() { MaxAge = JwtOptions.ExpirationTimeSpanForAccessToken });
+                        context.Response.Cookies.Append(TokenData.Refresh, nToken.RefreshToken, new CookieOptions() { MaxAge = JwtOptions.ExpirationTimeSpanForRefreshToken });
                         context.Request.Headers.Add("Authorization", "Bearer " + nToken.AccessToken);
                     }
                 }
