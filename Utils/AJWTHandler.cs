@@ -33,7 +33,7 @@ namespace JWTLibrary.Utils
             validationParameters.ValidateLifetime = true;
 
             validationParameters.IssuerSigningKey = this.SDKService.GetKey(this.AuthOptions.ApplicationClientKey);
-            validationParameters.ValidAudience = this.AuthOptions.ApplicationClientId;
+            validationParameters.ValidAudience = this.AuthOptions.ApplicationClientKey;
 
             //And let the framework take it from here.
             return base.ValidateToken(token, validationParameters, out validatedToken);
