@@ -48,6 +48,10 @@ namespace JWTLibrary.Utils.Middlewares
                         context.Response.Cookies.Append(TokenData.Refresh, nToken.RefreshToken, new CookieOptions() { MaxAge = JwtOptions.ExpirationTimeSpanForRefreshToken });
                         context.Request.Headers.Add("Authorization", "Bearer " + nToken.AccessToken);
                     }
+                    else
+                    {
+                        context.Response.Cookies.Delete(TokenData.Refresh);
+                    }
                 }
             }
 

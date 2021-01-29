@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using JWTLibrary.Client;
 using JWTLibrary.Interface;
 using JWTLibrary.JWT;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace JWTLibrary.Default.Service.Client
@@ -12,11 +13,16 @@ namespace JWTLibrary.Default.Service.Client
     public class JWTResolverDefaultService : IJWTResolverService
     {
         public HttpClient Http = new HttpClient();
-        public IAuthOptions AuthOptions { get; }
 
-        public JWTResolverDefaultService(IAuthOptions opt)
+        public ILogger<JWTResolverDefaultService> Logger { get; }
+        public IAuthOptions AuthOptions { get; }
+        public IJWTLifeTimeOptions JWTLifeTimeOptions { get; set; }
+
+        public JWTResolverDefaultService(ILogger<JWTResolverDefaultService> logger, IAuthOptions opt, IJWTLifeTimeOptions lftOpt)
         {
+            this.Logger = logger;
             AuthOptions = opt;
+            this.JWTLifeTimeOptions = lftOpt;
         }
 
         public async Task<TokenData> ResolveCode(string code, string sign)
@@ -25,19 +31,21 @@ namespace JWTLibrary.Default.Service.Client
                    {
                 new KeyValuePair<string, string>("", code)
             });
-            var url = $"{AuthOptions.Server}cap/code/{AuthOptions.ApplicationClientId}/?shareCode={code}&signature={sign}";
+            var url = this.AuthOptions.GetAuthenticationCodeResolverURL(code, sign);
+            this.Logger.LogInformation("Start resolving share code");
             HttpResponseMessage response = await Http.PostAsync(url, content);
             try
             {
-
                 response.EnsureSuccessStatusCode();
                 var resp = await response.Content.ReadAsStringAsync();
 
                 TokenData token = JsonConvert.DeserializeObject<TokenData>(resp);
+                this.Logger.LogInformation("Share code resolving sucsesful");
                 return token;
             }
             catch (Exception ex)
             {
+                this.Logger.LogTrace(ex, "Error on resolving auth code");
                 return null;
             }
         }
@@ -48,20 +56,29 @@ namespace JWTLibrary.Default.Service.Client
                     {
                 new KeyValuePair<string, string>("", code)
             });
+            this.Logger.LogInformation("Start refreshing user access token");
             try
             {
-                var url = $"{AuthOptions.Server}cap/refresh/{AuthOptions.ApplicationClientId}?code={code}&signature={sign}";
+                var url = this.AuthOptions.GetAuthenticationRefreshURL(code, sign);
                 HttpResponseMessage response = await Http.PostAsync(url, content);
                 response.EnsureSuccessStatusCode();
                 var resp = await response.Content.ReadAsStringAsync();
 
                 TokenData token = JsonConvert.DeserializeObject<TokenData>(resp);
+
+                this.Logger.LogInformation("User access token refreshing successful");
                 return token;
             }
             catch (Exception ex)
             {
+                this.Logger.LogTrace(ex, "Error on refresh user token");
                 return null;
             }
+        }
+
+        public string GetAuthenticationCodeURL()
+        {
+            return this.AuthOptions.GetAuthenticationRedirectURL();
         }
     }
 }
