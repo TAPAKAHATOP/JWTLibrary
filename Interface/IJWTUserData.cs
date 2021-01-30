@@ -4,11 +4,8 @@ namespace JWTLibrary.Interface
 {
     public interface IJWTUserData
     {
-        string GetDisplayName();
-        void SetDisplayName(string newDisplayName);
-        string GetIdentifier();
-        void SetIdentifier(string newId);
-        bool IsAuthenticated();
-        void SetIsAuthenticated(bool newAuthFlag);
+        string DisplayName { get; set; }
+        string Identifier { get; set; }
+        bool IsAuthenticated { get; set; }
     }
 }

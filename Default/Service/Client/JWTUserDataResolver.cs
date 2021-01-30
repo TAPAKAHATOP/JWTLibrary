@@ -14,15 +14,15 @@ namespace JWTLibrary.Default.Service.Client
                 switch (claim.Type)
                 {
                     case "name":
-                        uData.SetDisplayName(claim.Value);
+                        uData.DisplayName = claim.Value;
                         break;
                     case "id":
-                        uData.SetIdentifier(claim.Value);
+                        uData.Identifier = claim.Value;
                         break;
                 }
             }
 
-            uData.SetIsAuthenticated(user.Identity.IsAuthenticated);
+            uData.IsAuthenticated = user.Identity.IsAuthenticated;
             return uData;
         }
     }
