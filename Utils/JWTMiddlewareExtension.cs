@@ -5,6 +5,6 @@ namespace JWTLibrary.Utils
 {
     public static class JWTMiddlewareExtension
     {
-        public static IApplicationBuilder UseJwt(this IApplicationBuilder builder) => builder.UseMiddleware<JWTMiddleware>();
+        public static IApplicationBuilder UseJwt(this IApplicationBuilder builder) => builder.UseMiddleware<JWTDefaultMiddleware>();
     }
 }
