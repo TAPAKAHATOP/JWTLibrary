@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace JWTLibrary.Interface
 {
@@ -7,5 +8,6 @@ namespace JWTLibrary.Interface
         string DisplayName { get; set; }
         string Identifier { get; set; }
         bool IsAuthenticated { get; set; }
+        IList<string> Roles { get; set; }
     }
 }

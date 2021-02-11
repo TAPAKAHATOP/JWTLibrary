@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Security.Claims;
 using JWTLibrary.Interface;
 
@@ -18,6 +19,12 @@ namespace JWTLibrary.Default.Service.Client
                         break;
                     case "id":
                         uData.Identifier = claim.Value;
+                        break;
+                    case "role":
+                        uData.Roles.Add(claim.Value);
+                        break;
+                    case ClaimTypes.Role:
+                        uData.Roles.Add(claim.Value);
                         break;
                 }
             }
