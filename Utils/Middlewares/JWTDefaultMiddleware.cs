@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using JWTLibrary.Client;
 using JWTLibrary.Interface;
@@ -17,8 +18,15 @@ namespace JWTLibrary.Utils.Middlewares
         {
             var aToken = context.Request.Cookies[TokenData.Access];
             var rToken = context.Request.Cookies[TokenData.Refresh];
-            string signature = "";
+
+            string signature = "none";
+
             context.Request.Cookies.TryGetValue(SIGNATURE, out signature);
+            if (signature == null)
+            {
+                this.Logger.LogInformation("Signature for user is undefined, using is 'none' value;");
+                signature = "none";
+            }
 
             if (!string.IsNullOrEmpty(aToken))
             {

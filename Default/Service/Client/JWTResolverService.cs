@@ -25,7 +25,7 @@ namespace JWTLibrary.Default.Service.Client
             this.JWTLifeTimeOptions = lftOpt;
         }
 
-        public async Task<TokenData> ResolveCode(string code, string sign)
+        public async Task<TokenData> ResolveCode(string code, string sign="none")
         {
             var content = new FormUrlEncodedContent(new[]
                    {
