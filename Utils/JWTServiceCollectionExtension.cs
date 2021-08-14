@@ -32,6 +32,7 @@ namespace JWTLibrary.Utils
         public static IServiceCollection AddJWTAuthentication(this IServiceCollection services, bool useDefaults = true)
         {
             services.AddSingleton<IJWTUserDataResolver, JWTUserDataResolver>();
+            services.AddSingleton<TokenUtils>();
 
             if (useDefaults)
             {
