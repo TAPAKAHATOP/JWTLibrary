@@ -25,13 +25,13 @@ namespace JWTLibrary.Default.Service.Client
             this.JWTLifeTimeOptions = lftOpt;
         }
 
-        public async Task<TokenData> ResolveCode(string code, string sign)
+        public async Task<TokenData> ResolveCode(string code)
         {
             var content = new FormUrlEncodedContent(new[]
                    {
                 new KeyValuePair<string, string>("", code)
             });
-            var url = this.AuthOptions.GetAuthenticationCodeResolverURL(code, sign);
+            var url = this.AuthOptions.GetAuthenticationCodeResolverURL(code);
             this.Logger.LogInformation("Start resolving share code");
             HttpResponseMessage response = await Http.PostAsync(url, content);
             try
@@ -50,7 +50,7 @@ namespace JWTLibrary.Default.Service.Client
             }
         }
 
-        public async Task<TokenData> RefreshToken(string code, string sign)
+        public async Task<TokenData> RefreshToken(string code)
         {
             var content = new FormUrlEncodedContent(new[]
                     {
@@ -59,7 +59,7 @@ namespace JWTLibrary.Default.Service.Client
             this.Logger.LogInformation("Start refreshing user access token");
             try
             {
-                var url = this.AuthOptions.GetAuthenticationRefreshURL(code, sign);
+                var url = this.AuthOptions.GetAuthenticationRefreshURL(code);
                 HttpResponseMessage response = await Http.PostAsync(url, content);
                 response.EnsureSuccessStatusCode();
                 var resp = await response.Content.ReadAsStringAsync();
