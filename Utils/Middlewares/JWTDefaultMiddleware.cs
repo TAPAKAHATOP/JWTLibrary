@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using JWTLibrary.Client;
 using JWTLibrary.Interface;
@@ -7,23 +8,13 @@ using Microsoft.Extensions.Logging;
 
 namespace JWTLibrary.Utils.Middlewares
 {
-    public class JWTMiddleware
+    public class JWTDefaultMiddleware : ABaseJWTMiddleware<JWTDefaultMiddleware>
     {
-        public ILogger<JWTMiddleware> Logger { get; }
+        public JWTDefaultMiddleware(ILogger<JWTDefaultMiddleware> logger, RequestDelegate next, IJWTResolverService tService, IJWTLifeTimeOptions jwtOptions)
+        : base(logger, next, tService, jwtOptions)
+        { }
 
-        private readonly RequestDelegate _next;
-        private readonly IJWTResolverService TService;
-
-        private readonly IJWTLifeTimeOptions JwtOptions;
-
-        public JWTMiddleware(ILogger<JWTMiddleware> logger, RequestDelegate next, IJWTResolverService tService, IJWTLifeTimeOptions jwtOptions)
-        {
-            this.Logger = logger;
-            _next = next;
-            this.TService = tService;
-            this.JwtOptions = jwtOptions;
-        }
-        public async Task InvokeAsync(HttpContext context)
+        public override async Task InvokeAsync(HttpContext context)
         {
             var aToken = context.Request.Cookies[TokenData.Access];
             var rToken = context.Request.Cookies[TokenData.Refresh];
@@ -50,11 +41,6 @@ namespace JWTLibrary.Utils.Middlewares
                     }
                 }
             }
-
-            context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
-            context.Response.Headers.Add("X-Xss-Protection", "1");
-            context.Response.Headers.Add("X-Frame-Options", "DENY");
-
             await _next(context);
         }
     }

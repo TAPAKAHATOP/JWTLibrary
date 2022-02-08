@@ -31,6 +31,8 @@ namespace JWTLibrary.Utils
         }
         public static IServiceCollection AddJWTAuthentication(this IServiceCollection services, bool useDefaults = true)
         {
+            services.AddSingleton<TokenUtils>();
+
             if (useDefaults)
             {
                 services.AddSingleton<IPostConfigureOptions<JwtBearerOptions>, JwtBearerOptionsPostConfigureOptions>();
