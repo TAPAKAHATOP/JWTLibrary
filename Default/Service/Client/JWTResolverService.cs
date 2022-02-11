@@ -52,15 +52,11 @@ namespace JWTLibrary.Default.Service.Client
 
         public async Task<TokenData> RefreshToken(string code)
         {
-            var content = new FormUrlEncodedContent(new[]
-                    {
-                new KeyValuePair<string, string>("", code)
-            });
             this.Logger.LogInformation("Start refreshing user access token");
             try
             {
                 var url = this.AuthOptions.GetAuthenticationRefreshURL(code);
-                HttpResponseMessage response = await Http.PostAsync(url, content);
+                HttpResponseMessage response = await Http.GetAsync(url);
                 response.EnsureSuccessStatusCode();
                 var resp = await response.Content.ReadAsStringAsync();
 

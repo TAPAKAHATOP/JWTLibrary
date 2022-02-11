@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using JWTLibrary.Client;
 using JWTLibrary.Interface;
@@ -19,11 +20,7 @@ namespace JWTLibrary.Utils.Middlewares
             var aToken = context.Request.Cookies[TokenData.Access];
             var rToken = context.Request.Cookies[TokenData.Refresh];
 
-            if (!string.IsNullOrEmpty(aToken))
-            {
-                context.Request.Headers.Add("Authorization", "Bearer " + aToken);
-            }
-            else
+            if (string.IsNullOrEmpty(aToken))
             {
                 if (!string.IsNullOrEmpty(rToken))
                 {
@@ -31,9 +28,10 @@ namespace JWTLibrary.Utils.Middlewares
                     TokenData nToken = this.TService.RefreshToken(rToken).Result;
                     if (nToken != null)
                     {
+                        aToken = nToken.AccessToken;
+                        rToken = nToken.RefreshToken;
                         context.Response.Cookies.Append(TokenData.Access, nToken.AccessToken, new CookieOptions() { MaxAge = JwtOptions.ExpirationTimeSpanForAccessToken });
                         context.Response.Cookies.Append(TokenData.Refresh, nToken.RefreshToken, new CookieOptions() { MaxAge = JwtOptions.ExpirationTimeSpanForRefreshToken });
-                        context.Request.Headers.Add("Authorization", "Bearer " + nToken.AccessToken);
                     }
                     else
                     {
@@ -41,6 +39,19 @@ namespace JWTLibrary.Utils.Middlewares
                     }
                 }
             }
+
+            if (!string.IsNullOrEmpty(aToken))
+            {
+                if ((new string[] { "post", "delete", "put", "patch" }).Contains(context.Request.Method.ToLower()))
+                {
+                    context.Request.Headers.Add("Authorization", "Bearer " + aToken);
+                }
+                else
+                {
+                    context.Request.Headers.Add("Authorization", "Bearer " + aToken);
+                }
+            }
+
             await _next(context);
         }
     }
