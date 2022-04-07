@@ -33,6 +33,7 @@ namespace JWTLibrary.Default.Service.Client
             });
             var url = this.AuthOptions.GetAuthenticationCodeResolverURL(code);
             this.Logger.LogInformation("Start resolving share code");
+
             HttpResponseMessage response = await Http.PostAsync(url, content);
             try
             {
@@ -45,7 +46,7 @@ namespace JWTLibrary.Default.Service.Client
             }
             catch (Exception ex)
             {
-                this.Logger.LogTrace(ex, "Error on resolving auth code");
+                this.Logger.LogError(ex, "Error on resolving auth code");
                 return null;
             }
         }
@@ -67,7 +68,7 @@ namespace JWTLibrary.Default.Service.Client
             }
             catch (Exception ex)
             {
-                this.Logger.LogTrace(ex, "Error on refresh user token");
+                this.Logger.LogError(ex, "Error on refresh user token");
                 return null;
             }
         }

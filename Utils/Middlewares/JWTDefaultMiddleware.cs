@@ -35,6 +35,7 @@ namespace JWTLibrary.Utils.Middlewares
                     }
                     else
                     {
+                        this.Logger.LogInformation("Refreshing user token failed;");
                         context.Response.Cookies.Delete(TokenData.Refresh);
                     }
                 }
